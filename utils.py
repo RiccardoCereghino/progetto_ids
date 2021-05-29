@@ -72,3 +72,9 @@ def match_result(game, player):
     if (game.get("White") == player and result == "1-0") or (game.get("Black") == player and result == "0-1"):
         return 1
     return 0
+
+def get_elo_for_player(match, player):
+    if match.get("White") == player:
+        return int(match.get("WhiteElo"))
+    else:
+        return int(match.get("BlackElo"))
