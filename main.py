@@ -1,26 +1,67 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-from iterators import select
+from choices import print_results, query_result, player_statistics
 from pgn_reader import generate_games
+from itertools import tee
 
+from utils import number_choice
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    games_generator = generate_games("pgns/lichess_db_standard_rated_2013-01.pgn")
+
+    """
+    it_1, it_2 = tee(games_generator, 2)
 
     search_params = {
-        "White__eq": "BFG9k"
+        "White__eq": "BFG9k",
     }
 
-    tournament = list(select(games_generator, **search_params))
+    tournament = select(it_1, **search_params)
 
-    print_hi('PyCharm')
+    searched = list(search_moves(tournament, ["e4", "e6", "d4", "b6"]))
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    openings = {}
+    ss = sorted(it_2, key=lambda x: x['Opening'])
+    for key, group in groupby(ss, lambda x: x.get("Opening")):
+        openings[key] = list(group)
+
+    openings_results = {}
+    for opening, matches in openings.items():
+        if not openings_results.get(opening):
+            openings_results[opening] = {
+                "white_wins": 0,
+                "draws": 0,
+                "black_wins": 0
+            }
+
+        for match in matches:
+            if match.get("Result") == "1/2-1/2":
+                openings_results[opening]["draws"] += 1
+            elif match.get("Result") == "1-0":
+                openings_results[opening]["white_wins"] += 1
+            else:
+                openings_results[opening]["black_wins"] += 1
+    """
+    it = generate_games("pgns/lichess_db_standard_rated_2013-01.pgn")
+    while True:
+
+        choice = number_choice(
+            "Select operation to perform",
+            "Print first 10 results",
+            "Query result",
+            "Player statistics",
+            "Best moves after input",
+            "Opening statistics",
+            "Save results to file",
+            "Reset search"
+        )
+        if choice == 1:
+            it = generate_games("pgns/lichess_db_standard_rated_2013-01.pgn")
+        elif choice == 2:
+            print("\n#########################\n")
+            print_results(tee(it, 1)[0])
+            print("\n#########################\n")
+        elif choice == 3:
+            it = query_result(it)
+        elif choice == 4:
+            player_statistics(tee(it, 1)[0])
+        elif choice == -1:
+            print("Bye...")
+            break

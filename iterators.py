@@ -110,3 +110,19 @@ def generate_games(file: str) -> Iterator[Dict[str, str]]:
 
     for row in csv_gen:
         yield dict(zip(columns, row_splitter(row)))
+
+
+def search_moves(it: Iterator[Dict[str, Any]], moves: List[str]):
+    for game in it:
+        b = True
+        game_moves = game.get("moves")
+        for i in range(len(moves)):
+            if len(game_moves) < len(moves):
+                b = False
+                break
+            if moves[i] != game.get("moves")[i]:
+                b = False
+                break
+        if b:
+            yield game
+
