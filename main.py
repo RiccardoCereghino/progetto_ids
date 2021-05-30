@@ -52,16 +52,18 @@ if __name__ == '__main__':
             "Save results to file",
             "Reset search"
         )
-        if choice == 1:
+        if choice == 7:
             it = generate_games("pgns/lichess_db_standard_rated_2013-01.pgn")
-        elif choice == 2:
+        elif choice == 1:
             print("\n#########################\n")
             print_results(tee(it, 1)[0])
             print("\n#########################\n")
-        elif choice == 3:
+        elif choice == 2:
             it = query_result(it)
-        elif choice == 4:
+        elif choice == 3:
+            print("\n#########################\n")
             player_statistics(tee(it, 1)[0])
+            print("\n#########################\n")
         elif choice == -1:
             print("Bye...")
             break

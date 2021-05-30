@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Dict, Any
+import matplotlib.dates as mdates
 
 
 def format_field_for_pgn(match: Dict[str, Any], field: str):
@@ -73,8 +74,40 @@ def match_result(game, player):
         return 1
     return 0
 
-def get_elo_for_player(match, player):
-    if match.get("White") == player:
-        return int(match.get("WhiteElo"))
+
+def xfmt(x, pos=None):
+    ''' custom date formatting '''
+    x = mdates.num2date(x)
+    label = x.strftime('%m/%d')
+    label = label.lstrip('0')
+    return label
+
+
+def player_color(player, game):
+    return "White" if game.get("White") == player else "Black"
+
+
+def opponent_color(player, game):
+    return "Black" if game.get("White") == player else "White"
+
+
+def player_elo(player, game):
+    return int(game.get("{}Elo".format(player_color(player, game))))
+
+
+def opponent_elo(player, game):
+    return int(game.get("{}Elo".format(opponent_color(player, game))))
+
+
+def opponent_name(player, game):
+    return game.get(opponent_color(player, game))
+
+
+def str_match_result(player, game):
+    res = match_result(game, player)
+    if res == 1:
+        return "won"
+    elif res == 0:
+        return "lost"
     else:
-        return int(match.get("BlackElo"))
+        return "drawn"
