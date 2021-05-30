@@ -78,7 +78,7 @@ def match_result(game, player):
 def xfmt(x, pos=None):
     ''' custom date formatting '''
     x = mdates.num2date(x)
-    label = x.strftime('%m/%d')
+    label = x.strftime('%m/%d/%Y')
     label = label.lstrip('0')
     return label
 
@@ -101,6 +101,10 @@ def opponent_elo(player, game):
 
 def opponent_name(player, game):
     return game.get(opponent_color(player, game))
+
+
+def player_rating_diff(player, game):
+    return int(game.get("{}RatingDiff".format(player_color(player, game))))
 
 
 def str_match_result(player, game):
