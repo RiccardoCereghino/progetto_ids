@@ -21,9 +21,9 @@ def to_pgn(match: Dict[str, Any]):
     pgn_moves = "\n"
     for i in range(len(match.get("moves"))):
         if i % 2 == 0:
-            pgn_moves += "{}. ".format(i / 2 + 1)
+            pgn_moves += "{}. ".format(int(i / 2) + 1)
         pgn_moves += "{} ".format(match.get("moves")[i])
-    pgn_moves += "{}\n".format(match.get("Result"))
+    pgn_moves += "{}\n\n".format(match.get("Result"))
 
     return pgn + pgn_moves
 

@@ -43,6 +43,9 @@ def convert_pgn(pgn: List[str]):
             line = line[1:-1]
             key = re.search(key_pattern, line).group()
             pgn_dict[key] = re.search(value_pattern, line).group()[1:-1]
+            if key == "WhiteElo" or key == "BlackElo":
+                if pgn_dict[key] == "?":
+                    pgn_dict[key] = 0
         else:
             splitted_line = line.split(" ")
             for e in splitted_line[:-1]:

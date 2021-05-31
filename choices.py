@@ -23,9 +23,6 @@ def player_statistics(games: Iterator[Dict[str, Any]]):
 
     opening_stats(player, player_games)
 
-    # best worst victory
-    # elo plot
-
 
 def print_results(games: Iterator[Dict[str, Any]]):
     i = 0
@@ -37,7 +34,7 @@ def print_results(games: Iterator[Dict[str, Any]]):
 
 
 def query_result(games: Iterator[Dict[str, Any]]):
-    print("Write the query in the format: \"Key value\"")
+    print("Write the query in the format: \"Key=value\"")
 
     keys = ["Event", "Site", "Date", "Round", "White", "Black", "Result", "UTCDate", "UTCTime", "WhiteElo", "BlackElo",
             "WhiteRatingDiff", "BlackRatingDiff", "WhiteTitle", "BlackTitle", "ECO", "Opening", "TimeControl",
@@ -46,7 +43,7 @@ def query_result(games: Iterator[Dict[str, Any]]):
 
     try:
         inp = input("Query: ")
-        a = inp.split(" ")
+        a = inp.split("=")
         if a[0] in keys:
             key = a[0]
             value = a[1]
@@ -60,3 +57,11 @@ def query_result(games: Iterator[Dict[str, Any]]):
     }
 
     return select(games, **search_params)
+
+
+def save_to_file(games: Iterator[Dict[str, Any]]):
+    f = open("result.pgn", "w")
+    for game in games:
+        f.write(to_pgn(game))
+    f.close()
+

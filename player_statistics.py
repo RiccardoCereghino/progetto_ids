@@ -1,8 +1,7 @@
 from itertools import groupby
 
-from utils import match_result, datetime_from_game, xfmt, player_elo, opponent_elo, opponent_name, str_match_result, \
+from utils import match_result, datetime_from_game, player_elo, opponent_elo, opponent_name, str_match_result, \
     player_rating_diff
-import matplotlib.ticker as tkr
 from matplotlib import pyplot as plt
 
 
@@ -106,9 +105,23 @@ def extract_stats_from_games(player, games):
 
 
 def opening_stats(player, games):
-    # TODO white and black
+    white_games, black_games = [], []
+    for game in games:
+        if game.get("White") == player:
+            white_games.append(game)
+        elif game.get("Black") == player:
+            black_games.append(game)
+
+    if len(white_games) > 0:
+        opening_stats_per_color(player, white_games, "White")
+    if len(black_games) > 0:
+        opening_stats_per_color(player, black_games, "Black")
+
+
+def opening_stats_per_color(player, games, color):
     opening_stats = {}
-    s = sorted(games, key=lambda x: x['Opening'])
+    lll = filter(lambda x: x.get('Opening') is not None, games)
+    s = sorted(lll, key=lambda x: x.get('Opening'))
     for opening, group in groupby(s, lambda x: x.get("Opening")):
         wins = draws = losses = rating_diff = 0
         for match in group:
@@ -153,40 +166,38 @@ def opening_stats(player, games):
     print("\t---------")
     print("\tOpening statistics")
 
-    print("\t\t{} best opening is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%, drawing rate of {:.2f}%, played {} times, elo diff: {}".format(
-        player, best_opening["opening_name"], best_opening["winning_rate"], best_opening["losing_rate"], best_opening["drawing_rate"], best_opening["n_games"], best_opening["rating_diff"]
-    ))
-    print("\t\t{} worst opening is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%,drawing rate of {:.2f}%,  played {} times, elo diff: {}".format(
-        player, worst_opening["opening_name"], worst_opening["winning_rate"], worst_opening["losing_rate"], worst_opening["drawing_rate"], worst_opening["n_games"], worst_opening["rating_diff"]
-    ))
-    print("\t\t{} most drawable opening is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%,drawing rate of {:.2f}%,  played {} times, elo diff: {}".format(
-        player, draw_opening["opening_name"], draw_opening["winning_rate"], draw_opening["losing_rate"], draw_opening["drawing_rate"], draw_opening["n_games"], draw_opening["rating_diff"]
-    ))
-    print("\t\t{} most played opening is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%, drawing rate of {:.2f}%, played {} times, elo diff: {}".format(
-        player, most_played_opening["opening_name"], most_played_opening["winning_rate"], most_played_opening["losing_rate"], most_played_opening["drawing_rate"], most_played_opening["n_games"], most_played_opening["rating_diff"]
-    ))
+    print(
+        "\t\t{} best opening with {} is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%, drawing rate of {:.2f}%, played {} times, elo diff: {}".format(
+            player, color, best_opening["opening_name"], best_opening["winning_rate"], best_opening["losing_rate"],
+            best_opening["drawing_rate"], best_opening["n_games"], best_opening["rating_diff"]
+        ))
+    print(
+        "\t\t{} worst opening with {} is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%,drawing rate of {:.2f}%,  played {} times, elo diff: {}".format(
+            player, color, worst_opening["opening_name"], worst_opening["winning_rate"], worst_opening["losing_rate"],
+            worst_opening["drawing_rate"], worst_opening["n_games"], worst_opening["rating_diff"]
+        ))
+    print(
+        "\t\t{} most drawable opening with {} is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%,drawing rate of {:.2f}%,  played {} times, elo diff: {}".format(
+            player, color, draw_opening["opening_name"], draw_opening["winning_rate"], draw_opening["losing_rate"],
+            draw_opening["drawing_rate"], draw_opening["n_games"], draw_opening["rating_diff"]
+        ))
+    print(
+        "\t\t{} most played opening with {} is: {} with a winning rate of {:.2f}% losing rate of {:.2f}%, drawing rate of {:.2f}%, played {} times, elo diff: {}".format(
+            player, color, most_played_opening["opening_name"], most_played_opening["winning_rate"],
+            most_played_opening["losing_rate"], most_played_opening["drawing_rate"], most_played_opening["n_games"],
+            most_played_opening["rating_diff"]
+        ))
 
 
 def plt_elo(player, games):
     import matplotlib.dates as mdates
-    """
-    plt.subplot(3, 1, 1)
-
-    plt.plot(triangolo)
-
-    plt.subplot(3, 1, 2)
-    plt.plot(triangolo)
-
-    plt.subplot(3, 1, 3)
-
-    plt.plot(voce)
-    """
     s = sorted(games, key=lambda x: x['Event'])
     events = [(event, list(matches)) for event, matches in groupby(s, lambda x: x.get("Event"))]
 
-    #plt.rcParams['figure.figsize'] = [20, 20]
     i = 0
     for event, matches in events:
+        if len(matches) < 10:
+            continue
         data = []
         i += 1
         for game in matches:
@@ -199,18 +210,9 @@ def plt_elo(player, games):
 
         real_data = list(sorted(real_data, key=lambda x: x[0]))
 
-
-
-
-        #plt.subplot(len(events), 1, i)
-
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=7))
-        plt.plot([d[0] for d in real_data], [d[1] for d in real_data])
+        plt.plot([d[0] for d in real_data], [d[1] for d in real_data], label=event)
+        plt.legend()
         plt.gcf().autofmt_xdate()
         plt.show()
-
-        #plt.setp(plt.gca().xaxis.get_majorticklabels(), rotation=90)
-        #plt.gca().xaxis.set_major_formatter(tkr.FuncFormatter(xfmt))
-        #plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=35))
-        #plt.gca().xaxis.set_minor_locator(mdates.DayLocator())
