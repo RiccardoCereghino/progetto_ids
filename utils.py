@@ -49,7 +49,7 @@ def number_choice(question, *choices, exit_choice=False):
         except:
             answer = 0
 
-        if answer <= 0 or answer > len(choices) + 1:
+        if answer == 0 or answer > len(choices):
             print("Invalid input, please try again.")
         else:
             if answer == exit_number:
