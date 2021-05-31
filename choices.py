@@ -15,13 +15,16 @@ def player_statistics(games: Iterator[Dict[str, Any]]):
 
     games_by_date = sorted(player_games, key=lambda x: datetime_from_game(x))
 
-    w_d_l_streaks(player, games_by_date)
+    if games_by_date:
+        w_d_l_streaks(player, games_by_date)
 
-    extract_stats_from_games(player, games_by_date)
+        extract_stats_from_games(player, games_by_date)
 
-    plt_elo(player, games_by_date)
+        plt_elo(player, games_by_date)
 
-    opening_stats(player, player_games)
+        opening_stats(player, player_games)
+    else:
+        print("No match found for the selected player")
 
 
 def print_results(games: Iterator[Dict[str, Any]]):
