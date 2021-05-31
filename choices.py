@@ -48,9 +48,10 @@ def query_result(games: Iterator[Dict[str, Any]]):
             key = a[0]
             value = a[1]
         else:
+            print("Query format not supported")
             raise Exception
-    except:
-        return
+    except Exception:
+        return games
 
     search_params = {
         "{}__eq".format(key): value,

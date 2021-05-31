@@ -5,44 +5,8 @@ from itertools import tee
 from utils import number_choice
 
 if __name__ == '__main__':
-
-    """
-    it_1, it_2 = tee(games_generator, 2)
-
-    search_params = {
-        "White__eq": "BFG9k",
-    }
-
-    tournament = select(it_1, **search_params)
-
-    searched = list(search_moves(tournament, ["e4", "e6", "d4", "b6"]))
-
-    openings = {}
-    ss = sorted(it_2, key=lambda x: x['Opening'])
-    for key, group in groupby(ss, lambda x: x.get("Opening")):
-        openings[key] = list(group)
-
-    openings_results = {}
-    for opening, matches in openings.items():
-        if not openings_results.get(opening):
-            openings_results[opening] = {
-                "white_wins": 0,
-                "draws": 0,
-                "black_wins": 0
-            }
-
-        for match in matches:
-            if match.get("Result") == "1/2-1/2":
-                openings_results[opening]["draws"] += 1
-            elif match.get("Result") == "1-0":
-                openings_results[opening]["white_wins"] += 1
-            else:
-                openings_results[opening]["black_wins"] += 1
-    """
     it = generate_games("pgns/lichess_db_standard_rated_2013-01.pgn")
     while True:
-        # "Opening statistics",
-
         choice = number_choice(
             "Select operation to perform, -1 to exit",
             "Print first 10 results",
